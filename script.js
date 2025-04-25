@@ -1,47 +1,59 @@
-const aSlider = document.getElementById('param-a');
-const bSlider = document.getElementById('param-b');
-const cSlider = document.getElementById('param-c');
+const aSlider = document.getElementById("param-a");
+const bSlider = document.getElementById("param-b");
+const cSlider = document.getElementById("param-c");
+const aVal = document.getElementById("a-val");
+const bVal = document.getElementById("b-val");
+const cVal = document.getElementById("c-val");
 
-const aVal = document.getElementById('a-val');
-const bVal = document.getElementById('b-val');
-const cVal = document.getElementById('c-val');
+let a = parseFloat(aSlider.value);
+let b = parseFloat(bSlider.value);
+let c = parseFloat(cSlider.value);
 
-[aSlider, bSlider, cSlider].forEach(slider => {
-    slider.addEventListener('input', () => {
-        aVal.textContent = aSlider.value;
-        bVal.textContent = bSlider.value;
-        cVal.textContent = cSlider.value;
-        updateChart();
-    });
-});
+aSlider.oninput = () => {
+    a = parseFloat(aSlider.value);
+    aVal.textContent = a.toFixed(2);
+};
+bSlider.oninput = () => {
+    b = parseFloat(bSlider.value);
+    bVal.textContent = b.toFixed(2);
+};
+cSlider.oninput = () => {
+    c = parseFloat(cSlider.value);
+    cVal.textContent = c.toFixed(1);
+};
 
-const ctx = document.getElementById('chart').getContext('2d');
+// Chart.js initialization
+const ctx = document.getElementById("chart").getContext("2d");
 const chart = new Chart(ctx, {
     type: 'scatter',
-    data: { datasets: [{ label: 'Poincaré Section', data: [], pointRadius: 2 }] },
+    data: {
+        datasets: [{
+            label: "Poincaré Section",
+            data: [],
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            pointRadius: 2
+        }]
+    },
     options: {
+        responsive: true,
         scales: {
-            x: { title: { display: true, text: 'x' } },
-            y: { title: { display: true, text: 'y' } }
+            x: { type: 'linear', position: 'bottom' },
+            y: { type: 'linear' }
         }
     }
 });
 
-function updateChart() {
-    fetch('https://poincare-map-backend.onrender.com/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            a: aSlider.value,
-            b: bSlider.value,
-            c: cSlider.value
-        })
+// Fetch and update chart only on button click
+document.getElementById("generate-button").onclick = () => {
+    fetch("https://poincare-map-backend.onrender.com/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ a, b, c })
     })
     .then(res => res.json())
     .then(data => {
         chart.data.datasets[0].data = data;
         chart.update();
-    });
-}
-
-window.onload = updateChart;
+    })
+    .catch(err => console.error("Error:", err));
+};
