@@ -28,7 +28,7 @@ const chart = new Chart(ctx, {
 });
 
 function updateChart() {
-    fetch('https://poincare-api.onrender.com/generate', {
+    fetch('https://poincare-map-backend.onrender.com/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
