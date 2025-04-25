@@ -52,6 +52,7 @@ document.getElementById("generate-button").onclick = () => {
     })
     .then(res => res.json())
     .then(data => {
+        console.log("Received data:", data);
         chart.data.datasets[0].data = data;
         chart.update();
     })
